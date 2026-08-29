@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv and Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version-file: ".python-version"
+          enable-cache: true
+
+      - name: Install the project
+        run: uv sync --locked
+
+      - name: Run ruff format
+        run: uv run ruff format --check
+        continue-on-error: true
+
+      - name: Run ruff check
+        run: uv run ruff check
+        if: '!cancelled()'
+
+      - name: Run mypy
+        run: uv run mypy
+        if: '!cancelled()'
+
+      - name: Run tests
+        run: uv run pytest
+        if: '!cancelled()'
