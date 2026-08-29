@@ -1,0 +1,43 @@
+[project]
+name = "gradlab"
+version = "0.1.0"
+description = "A NumPy autograd engine built from scratch to understand backpropagation"
+readme = "README.md"
+authors = [
+    { name = "Mohamed Bekenniche", email = "mohamed.bekenniche@etu.univ-smb.fr" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.5.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.2,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.4",
+]
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+
+
+[tool.ruff.lint]
+extend-select = ["B","I","UP","N","PT","RUF"]
